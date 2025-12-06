@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tuesday–Thursday 學習小卡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 14px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans TC", sans-serif;
+      background: #faf6ff;
+      display: flex;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 620px;
+    }
+
+    .card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px 22px 26px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .day {
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 1.1rem;
+      background: #ffe4b5;
+    }
+
+    /* ===== 週二：詞性區 ===== */
+    .grammar-box {
+      background: #eef6ff;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+      font-size: 1.15rem;
+    }
+
+    .grammar-title {
+      font-weight: 800;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .g-item {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .adj  { color: #e53935; font-weight: 800; }
+    .noun { color: #1e88e5; font-weight: 800; }
+    .verb { color: #2e7d32; font-weight: 800; }
+
+    .speak-btn {
+      margin-left: 8px;
+      border: none;
+      background: #333;
+      color: #fff;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    /* 共用：任務提示、句子排版、播放鍵 */
+    .reminder {
+      margin-top: 14px;
+      font-size: 1.15rem;
+      background: #fff8e5;
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .reminder-title {
+      font-weight: 800;
+      margin-bottom: 6px;
+      font-size: 1.25rem;
+    }
+
+    ol {
+      padding-left: 0;
+      margin-top: 18px;
+      margin-bottom: 0;
+      list-style: none;
+    }
+
+    li {
+      margin-bottom: 26px;
+      border-bottom: 1px dashed #ddd;
+      padding-bottom: 14px;
+    }
+
+    .sentence-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .sentence-text {
+      flex: 1;
+    }
+
+    .line-en {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .line-zh {
+      font-size: 1.2rem;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    .play-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: #4caf50;
+      color: #fff;
+      font-weight: 800;
+      white-space: nowrap;
+      height: fit-content;
+    }
+
+    .play-all-box {
+      text-align: center;
+      margin: 18px 0 8px;
+    }
+
+    .play-all-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 26px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      background: #ff9800;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    /* ===== 週三 ===== */
+    .instructions {
+      margin-top: 14px;
+      font-size: 1.15rem;
+      background: #fff8e1;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.7;
+    }
+
+    .food-img-box {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .food-img {
+      max-width: 100%;
+      border-radius: 14px;
+      border: 2px solid #ddd;
+    }
+
+    .section-title {
+      margin-top: 20px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .key {
+      color: #e53935;
+      font-weight: 800;
+    }
+
+    /* ===== 週四 ===== */
+    .box {
+      margin-top: 14px;
+      font-size: 1.1rem;
+      background: #fff8e1;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.7;
+    }
+
+    .example-word {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #e3f2fd;
+      font-weight: 800;
+    }
+
+    .word-list {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f1f8e9;
+      border-radius: 14px;
+      font-size: 1.1rem;
+    }
+
+    .word-list-title {
+      font-weight: 800;
+      margin-bottom: 8px;
+      font-size: 1.25rem;
+    }
+
+    table.word-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    .word-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .word-en {
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    .word-zh {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* 五大短母音技巧表 */
+    table.tip-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 1.05rem;
+    }
+
+    .tip-table th, .tip-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .tip-table th {
+      background: #e3f2fd;
+      font-weight: 800;
+    }
+
+    /* Sort table */
+    table.sort-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 1.05rem;
+    }
+
+    .sort-table th, .sort-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    .sort-table th {
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .vowel-a { background: #ffecb3; }
+    .vowel-e { background: #ffe0e0; }
+    .vowel-i { background: #e1f5fe; }
+    .vowel-o { background: #f3e5f5; }
+    .vowel-u { background: #e8f5e9; }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    /* 動詞表 */
+    table.verb-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 1.05rem;
+    }
+    .verb-table th, .verb-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .verb-table th {
+      background: #fff3cd;
+      font-weight: 800;
+    }
+    .verb-examples {
+      margin-top: 12px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- ========== TUESDAY CARD ========== -->
+  <div class="card">
+
+    <div class="grammar-box">
+      <div class="grammar-title">📘 英文基本詞性（點 🔊 聽）</div>
+
+      <div class="g-item">
+        <span class="adj">Adjective（形容詞）</span>
+        <button class="speak-btn" data-audio="adj.mp3">🔊</button><br>
+        形容名詞的字：big、small、red、sweet
+      </div>
+
+      <div class="g-item">
+        <span class="noun">Noun（名詞）</span>
+        <button class="speak-btn" data-audio="noun.mp3">🔊</button><br>
+        人事物地點：bird、cat、apple、sun
+      </div>
+
+      <div class="g-item">
+        <span class="verb">Verb（動詞）</span>
+        <button class="speak-btn" data-audio="verb.mp3">🔊</button><br>
+        動作狀態：run、eat、sing、wear
+      </div>
+    </div>
+
+    <div class="card-header">
+      <div class="day">Tuesday 星期二</div>
+      <div class="tag">Reading｜Adjectives</div>
+    </div>
+
+    <div class="reminder">
+      <div class="reminder-title">💡 任務</div>
+      讀句子，找出形容詞（紅色）、名詞（藍色）、動詞（綠色）。
+    </div>
+
+    <div class="play-all-box">
+      <button class="play-all-btn" id="playAllTueBtn">🔁 全部播放 Tuesday 1 → 5</button>
+    </div>
+
+    <ol>
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              The <span class="adj">blue</span> <span class="noun">bird</span> is <span class="verb">singing</span>.
+            </div>
+            <div class="line-zh">
+              那隻<span class="adj">藍色的</span>小鳥正在<span class="verb">唱歌</span>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="1.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              I <span class="verb">have</span> a <span class="adj">small</span> <span class="noun">cat</span>.
+            </div>
+            <div class="line-zh">
+              我有一隻<span class="adj">小</span><span class="noun">貓</span>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="2.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              She <span class="verb">ate</span> a <span class="adj">sweet</span> <span class="noun">apple</span>.
+            </div>
+            <div class="line-zh">
+              她<span class="verb">吃了</span>一顆<span class="adj">甜的</span><span class="noun">蘋果</span>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="3.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              The <span class="noun">sun</span> is <span class="verb">shining</span> <span class="adj">bright</span>.
+            </div>
+            <div class="line-zh">
+              太陽正在<span class="verb">照耀</span>，非常<span class="adj">明亮</span>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="4.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              He <span class="verb">wears</span> a <span class="adj">red</span> <span class="noun">hat</span>.
+            </div>
+            <div class="line-zh">
+              他<span class="verb">戴著</span>一頂<span class="adj">紅色</span><span class="noun">帽子</span>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="5.mp3">▶</button>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ========== WEDNESDAY CARD ========== -->
+  <div class="card">
+
+    <div class="card-header">
+      <div class="day">Wednesday 星期三</div>
+      <div class="tag">Writing & Reading｜Healthy Food</div>
+    </div>
+
+    <div class="instructions">
+      ✅ 看圖分辨 <span class="key">健康</span> 和 <span class="key">不健康</span> 的食物。<br>
+      ✅ 題目：Why is it important to eat healthy?<br>
+      ✅ 讀下面四句，都是「完整回答 why」的範例句。
+    </div>
+
+    <div class="food-img-box">
+      <img src="wednesday.png" alt="Healthy and unhealthy food chart" class="food-img">
+    </div>
+
+    <div class="section-title">🥦 Why it is important to eat healthy</div>
+
+    <div class="play-all-box">
+      <button class="play-all-btn" id="playAllWedBtn">🔁 全部播放 Wednesday 6 → 9</button>
+    </div>
+
+    <ol>
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              1. It is important to eat healthy because it makes me strong.
+            </div>
+            <div class="line-zh">
+              吃得健康很重要，因為它讓我變得更<strong>強壯</strong>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="6.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              2. It is important to eat healthy because it helps me grow.
+            </div>
+            <div class="line-zh">
+              吃得健康很重要，因為它<strong>幫助我長大、長高</strong>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="7.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              3. It is important to eat healthy because it keeps me healthy.
+            </div>
+            <div class="line-zh">
+              吃得健康很重要，因為它讓我<strong>保持健康</strong>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="8.mp3">▶</button>
+        </div>
+      </li>
+
+      <li>
+        <div class="sentence-row">
+          <div class="sentence-text">
+            <div class="line-en">
+              4. It is important to eat healthy because it is good for my body.
+            </div>
+            <div class="line-zh">
+              吃得健康很重要，因為它對我的<strong>身體很好</strong>。
+            </div>
+          </div>
+          <button class="play-btn" data-audio="9.mp3">▶</button>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ========== THURSDAY CARD ========== -->
+  <div class="card">
+
+    <div class="card-header">
+      <div class="day">Thursday 星期四</div>
+      <div class="tag">Phonics ＋ Verbs｜CCVCC & Past Tense</div>
+    </div>
+
+    <div class="box">
+      <strong>CCVCC words</strong>：前面 2 個子音 (C)，中間 1 個母音 (V)，後面 2 個子音。<br>
+      今天的母音是 <strong>短母音（short vowel）</strong>。<br>
+      例如：<span class="example-word">plant</span>（pl-a-nt）
+    </div>
+
+    <div class="word-list">
+      <div class="word-list-title">👉 Today’s CCVCC Words（含中文）</div>
+
+      <table class="word-table">
+        <tr>
+          <td><div class="word-en">skunk</div><div class="word-zh">臭鼬</div></td>
+          <td><div class="word-en">stand</div><div class="word-zh">站立</div></td>
+          <td><div class="word-en">drink</div><div class="word-zh">喝</div></td>
+          <td><div class="word-en">snack</div><div class="word-zh">點心</div></td>
+        </tr>
+        <tr>
+          <td><div class="word-en">plant</div><div class="word-zh">植物</div></td>
+          <td><div class="word-en">frost</div><div class="word-zh">霜</div></td>
+          <td><div class="word-en">trunk</div><div class="word-zh">樹幹</div></td>
+          <td><div class="word-en">print</div><div class="word-zh">列印</div></td>
+        </tr>
+        <tr>
+          <td><div class="word-en">clump</div><div class="word-zh">一堆</div></td>
+          <td><div class="word-en">slept</div><div class="word-zh">睡了</div></td>
+          <td><div class="word-en">smell</div><div class="word-zh">聞</div></td>
+          <td><div class="word-en">crack</div><div class="word-zh">裂開</div></td>
+        </tr>
+        <tr>
+          <td><div class="word-en">trick</div><div class="word-zh">魔術</div></td>
+          <td><div class="word-en">stamp</div><div class="word-zh">郵票</div></td>
+          <td><div class="word-en">crust</div><div class="word-zh">外皮</div></td>
+          <td><div class="word-en">blink</div><div class="word-zh">眨眼</div></td>
+        </tr>
+        <tr>
+          <td><div class="word-en">twist</div><div class="word-zh">扭轉</div></td>
+          <td><div class="word-en">chest</div><div class="word-zh">胸部</div></td>
+          <td colspan="2"></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section-title">🔤 五大短母音發音技巧總表</div>
+
+    <table class="tip-table">
+      <tr>
+        <th>母音</th>
+        <th>發音（音標）</th>
+        <th>嘴型技巧</th>
+        <th>中文感覺</th>
+      </tr>
+      <tr>
+        <td>short a</td>
+        <td>/æ/</td>
+        <td>嘴巴張大扁平</td>
+        <td>像在說「啊～」</td>
+      </tr>
+      <tr>
+        <td>short e</td>
+        <td>/e/</td>
+        <td>嘴巴微開、扁扁的</td>
+        <td>像「ㄟ」</td>
+      </tr>
+      <tr>
+        <td>short i</td>
+        <td>/ɪ/</td>
+        <td>嘴巴小開、扁扁的</td>
+        <td>像「一」</td>
+      </tr>
+      <tr>
+        <td>short o</td>
+        <td>/ɒ/ 或 /ɑ/</td>
+        <td>嘴巴圓圓張開</td>
+        <td>像「喔」</td>
+      </tr>
+      <tr>
+        <td>short u</td>
+        <td>/ʌ/</td>
+        <td>嘴巴小圓、很短</td>
+        <td>像「呃」</td>
+      </tr>
+    </table>
+
+    <div class="play-all-box">
+      <button class="play-all-btn" id="playAllThuBtn">
+        🔊 播放全部 CCVCC 單字（thursday.mp3）
+      </button>
+    </div>
+
+    <div class="section-title">🧩 Sort the CCVCC words by short vowels（答案）</div>
+
+    <table class="sort-table">
+      <tr>
+        <th class="vowel-a">short a</th>
+        <th class="vowel-e">short e</th>
+        <th class="vowel-i">short i</th>
+        <th class="vowel-o">short o</th>
+        <th class="vowel-u">short u</th>
+      </tr>
+      <tr>
+        <td class="vowel-a">
+          <ul>
+            <li>stand</li>
+            <li>snack</li>
+            <li>plant</li>
+            <li>crack</li>
+            <li>stamp</li>
+          </ul>
+        </td>
+        <td class="vowel-e">
+          <ul>
+            <li>slept</li>
+            <li>smell</li>
+            <li>chest</li>
+          </ul>
+        </td>
+        <td class="vowel-i">
+          <ul>
+            <li>drink</li>
+            <li>print</li>
+            <li>trick</li>
+            <li>blink</li>
+            <li>twist</li>
+          </ul>
+        </td>
+        <td class="vowel-o">
+          <ul>
+            <li>frost</li>
+          </ul>
+        </td>
+        <td class="vowel-u">
+          <ul>
+            <li>skunk</li>
+            <li>trunk</li>
+            <li>clump</li>
+            <li>crust</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <!-- 🔽 新增：動詞表＋例句 -->
+    <div class="section-title">💪 Past Tense Verbs（過去式動詞）</div>
+
+    <table class="verb-table">
+      <tr>
+        <th>原形動詞 (Verb)</th>
+        <th>過去式 (Past Tense)</th>
+        <th>中文意思</th>
+      </tr>
+      <tr><td>stretch</td><td>stretched</td><td>伸展</td></tr>
+      <tr><td>dance</td><td>danced</td><td>跳舞</td></tr>
+      <tr><td>smile</td><td>smiled</td><td>微笑</td></tr>
+      <tr><td>exercise</td><td>exercised</td><td>運動</td></tr>
+      <tr><td>climb</td><td>climbed</td><td>爬</td></tr>
+      <tr><td>share</td><td>shared</td><td>分享</td></tr>
+      <tr><td>help</td><td>helped</td><td>幫助</td></tr>
+      <tr><td>rest</td><td>rested</td><td>休息</td></tr>
+      <tr><td>laugh</td><td>laughed</td><td>大笑</td></tr>
+      <tr><td>learn</td><td>learned / learnt</td><td>學習</td></tr>
+    </table>
+
+    <div class="verb-examples">
+      1. I stretched 10 times to get exercise.<br>
+      👉 我伸展了 10 次來運動。<br><br>
+      2. Joe shared with her toys, but then she cleaned up her room.<br>
+      👉 Joe 分享了她的玩具，然後她整理了她的房間。<br><br>
+      3. I smiled after waking up.<br>
+      👉 我起床後微笑了。<br><br>
+      4. We danced at the party last night.<br>
+      👉 我們昨晚在派對上跳舞了。<br><br>
+      5. Tom climbed the tree to get the ball.<br>
+      👉 Tom 爬上了樹去拿球。
+    </div>
+
+    <!-- 🎬 週四補充影片（最下面） -->
+    <div style="
+      margin-top: 20px;
+      padding: 14px;
+      background: #e8f4ff;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 1.05rem;
+    ">
+      <strong>🎬 週四補充影片：</strong><br>
+      <a href="https://youtu.be/wJ-IUXfju3o?si=y0eI-Vrt6oMvjUGE"
+         target="_blank"
+         style="color:#1e88e5; text-decoration: underline; font-weight: 700;">
+        Short Vowel Sounds 教學影片（點我觀看）
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentAudio = null;
+
+  function playAudio(src, onEnd) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+    currentAudio = new Audio(src);
+    currentAudio.play();
+    currentAudio.onended = onEnd || null;
+  }
+
+  // 單句播放（週二＋週三）
+  document.querySelectorAll(".play-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const src = btn.getAttribute("data-audio");
+      playAudio(src);
+    });
+  });
+
+  // 詞性播放（週二）
+  document.querySelectorAll(".speak-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const src = btn.getAttribute("data-audio");
+      playAudio(src);
+    });
+  });
+
+  // 週二全部播放 1~5 依序播完
+  document.getElementById("playAllTueBtn").addEventListener("click", () => {
+    const queue = ["1.mp3", "2.mp3", "3.mp3", "4.mp3", "5.mp3"];
+    let idx = 0;
+    function playNext() {
+      if (idx >= queue.length) return;
+      const src = queue[idx++];
+      playAudio(src, playNext);
+    }
+    playNext();
+  });
+
+  // 週三全部播放 6~9 依序播完
+  document.getElementById("playAllWedBtn").addEventListener("click", () => {
+    const queue = ["6.mp3", "7.mp3", "8.mp3", "9.mp3"];
+    let idx = 0;
+    function playNext() {
+      if (idx >= queue.length) return;
+      const src = queue[idx++];
+      playAudio(src, playNext);
+    }
+    playNext();
+  });
+
+  // 週四單一 mp3（CCVCC 總複習）
+  document.getElementById("playAllThuBtn").addEventListener("click", () => {
+    playAudio("thursday.mp3");
+  });
+</script>
+
+</body>
+</html>
