@@ -203,6 +203,50 @@
       font-weight: 800;
     }
 
+    /* ===== 週三：跟著念練習區塊 ===== */
+    .shadow-area {
+      margin-top: 22px;
+      padding: 14px 14px 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ffebee, #fff3e0);
+      border: 2px dashed #ff7043;
+      text-align: center;
+    }
+
+    .shadow-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: #d84315;
+    }
+
+    .shadow-btn {
+      margin-top: 4px;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 30px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #ff1744, #ff9100);
+      box-shadow: 0 0 16px rgba(255, 87, 34, 0.75);
+      animation: shadowPulse 1.6s infinite;
+    }
+
+    .shadow-tip {
+      margin-top: 10px;
+      font-size: 1.05rem;
+      color: #5d4037;
+      font-weight: 700;
+    }
+
+    @keyframes shadowPulse {
+      0%   { transform: scale(1);   box-shadow: 0 0 8px rgba(255, 87, 34, 0.4); }
+      50%  { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 152, 0, 0.9); }
+      100% { transform: scale(1);   box-shadow: 0 0 8px rgba(255, 87, 34, 0.4); }
+    }
+
     /* ===== 週四 ===== */
     .box {
       margin-top: 14px;
@@ -529,6 +573,18 @@
         </div>
       </li>
     </ol>
+
+    <!-- 🗣️ 星期三小卡「最後面」的跟著念練習區塊 -->
+    <div class="shadow-area">
+      <div class="shadow-title">🗣️ 跟著念練習 </div>
+      <button class="shadow-btn" id="shadowWedBtn">
+        🎧 點我跟著一起念
+      </button>
+      <div class="shadow-tip">
+        跟著念 3 遍練習💪
+      </div>
+    </div>
+
   </div>
 
   <!-- ========== THURSDAY CARD ========== -->
@@ -736,22 +792,90 @@
 
 <script>
   let currentAudio = null;
+  let currentButton = null;
+  let currentQueue = null;
 
-  function playAudio(src, onEnd) {
+  // 儲存所有按鈕原本文字
+  document.querySelectorAll("button").forEach(btn => {
+    if (!btn.dataset.originalLabel) {
+      btn.dataset.originalLabel = btn.innerText;
+    }
+  });
+
+  function restoreButton() {
+    if (currentButton) {
+      const label = currentButton.dataset.originalLabel;
+      if (label) currentButton.innerText = label;
+      currentButton = null;
+    }
+  }
+
+  function stopAudio() {
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
+      currentAudio = null;
     }
+    currentQueue = null;
+    restoreButton();
+  }
+
+  // 播放單一 mp3（再次點同一顆 = 暫停）
+  function playSingle(src, btn) {
+    if (currentAudio && !currentAudio.paused && currentButton === btn && !currentQueue) {
+      // 同一顆正在播 → 當成暫停／停止
+      stopAudio();
+      return;
+    }
+
+    stopAudio();
+    currentButton = btn;
+    currentButton.innerText = "⏸ 暫停";
+
     currentAudio = new Audio(src);
     currentAudio.play();
-    currentAudio.onended = onEnd || null;
+    currentAudio.onended = () => {
+      stopAudio();
+    };
+  }
+
+  // 依序播放一串 mp3（queue），同一顆再點一次 = 停止
+  function playQueue(queue, btn) {
+    if (currentQueue && currentButton === btn && currentAudio && !currentAudio.paused) {
+      // 已經在播這個 queue，再點一次就全部停
+      stopAudio();
+      return;
+    }
+
+    stopAudio();
+    currentButton = btn;
+    currentButton.innerText = "⏸ 暫停";
+    currentQueue = queue.slice();
+    let index = 0;
+
+    function playNext() {
+      if (!currentQueue || index >= currentQueue.length) {
+        stopAudio();
+        return;
+      }
+      const src = currentQueue[index++];
+      currentAudio = new Audio(src);
+      currentAudio.play();
+      currentAudio.onended = () => {
+        if (currentQueue && currentButton === btn) {
+          playNext();
+        }
+      };
+    }
+
+    playNext();
   }
 
   // 單句播放（週二＋週三）
   document.querySelectorAll(".play-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const src = btn.getAttribute("data-audio");
-      playAudio(src);
+      if (src) playSingle(src, btn);
     });
   });
 
@@ -759,38 +883,42 @@
   document.querySelectorAll(".speak-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const src = btn.getAttribute("data-audio");
-      playAudio(src);
+      if (src) playSingle(src, btn);
     });
   });
 
-  // 週二全部播放 1~5 依序播完
-  document.getElementById("playAllTueBtn").addEventListener("click", () => {
-    const queue = ["1.mp3", "2.mp3", "3.mp3", "4.mp3", "5.mp3"];
-    let idx = 0;
-    function playNext() {
-      if (idx >= queue.length) return;
-      const src = queue[idx++];
-      playAudio(src, playNext);
-    }
-    playNext();
-  });
+  // 週二全部播放 1~5 依序播完（同一顆再點 = 停止）
+  const playAllTueBtn = document.getElementById("playAllTueBtn");
+  if (playAllTueBtn) {
+    playAllTueBtn.addEventListener("click", () => {
+      playQueue(["1.mp3", "2.mp3", "3.mp3", "4.mp3", "5.mp3"], playAllTueBtn);
+    });
+  }
 
   // 週三全部播放 6~9 依序播完
-  document.getElementById("playAllWedBtn").addEventListener("click", () => {
-    const queue = ["6.mp3", "7.mp3", "8.mp3", "9.mp3"];
-    let idx = 0;
-    function playNext() {
-      if (idx >= queue.length) return;
-      const src = queue[idx++];
-      playAudio(src, playNext);
-    }
-    playNext();
-  });
+  const playAllWedBtn = document.getElementById("playAllWedBtn");
+  if (playAllWedBtn) {
+    playAllWedBtn.addEventListener("click", () => {
+      playQueue(["6.mp3", "7.mp3", "8.mp3", "9.mp3"], playAllWedBtn);
+    });
+  }
 
-  // 週四單一 mp3（CCVCC 總複習）
-  document.getElementById("playAllThuBtn").addEventListener("click", () => {
-    playAudio("thursday.mp3");
-  });
+  // 週三「跟著念練習」按鈕（單一 mp3）
+  const shadowBtn = document.getElementById("shadowWedBtn");
+  if (shadowBtn) {
+    shadowBtn.addEventListener("click", () => {
+      // 把檔名換成你實際的練習音檔
+      playSingle("wednesday_practice.mp3", shadowBtn);
+    });
+  }
+
+  // 週四單一 mp3（CCVCC 總複習），同一顆再點 = 暫停
+  const playAllThuBtn = document.getElementById("playAllThuBtn");
+  if (playAllThuBtn) {
+    playAllThuBtn.addEventListener("click", () => {
+      playSingle("thursday.mp3", playAllThuBtn);
+    });
+  }
 </script>
 
 </body>
